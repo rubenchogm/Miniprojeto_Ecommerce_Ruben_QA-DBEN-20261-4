@@ -13,6 +13,7 @@ import {
   listarItensCarrinho,
   calcularTotalCarrinho,
 } from "./carrinho";
+import { finalizarPedido, consultarPedidos, consultarPedidosPorCliente } from "./pedidos";
 
 // Ejecuta una acción; si lanza un error, lo muestra en lugar de detener el programa.
 function tentar(descricao: string, acao: () => unknown): void {
@@ -90,3 +91,36 @@ tentar("remover o teclado", () => removerDoCarrinho(1, 1));
 tentar("remover item que nao esta", () => removerDoCarrinho(1, 6));
 console.log(listarItensCarrinho(1));
 console.log("Total final:", calcularTotalCarrinho(1));
+
+// ==================== PEDIDOS ====================
+console.log("=== Pedidos ===");
+tentar("finalizar com carrinho vazio (cliente 2)", () => finalizarPedido(2));
+tentar("finalizar para cliente inexistente", () => finalizarPedido(99));
+
+console.log("Estoque do mouse ANTES:", buscarProdutoPorId(2)?.estoque);
+tentar("finalizar pedido do cliente 1", () => finalizarPedido(1));
+console.log("Estoque do mouse DEPOIS:", buscarProdutoPorId(2)?.estoque);
+console.log("Carrinho do cliente 1 depois da compra:", listarItensCarrinho(1));
+
+console.log("--- Preco historico ---");
+tentar("mudar preco do mouse para 150", () => atualizarProduto(2, { preco: 150 }));
+console.log("Preco unitario guardado no pedido 1:", consultarPedidos()[0]?.itens[0]?.precoUnitario);
+
+console.log("--- Falha por estoque (nada deve ser descontado) ---");
+tentar("cliente 2 adiciona 3 monitores", () => adicionarAoCarrinho(2, 3, 3));
+tentar("cliente 2 adiciona 2 teclados", () => adicionarAoCarrinho(2, 1, 2));
+tentar("estoque do teclado cai para 1", () => atualizarProduto(1, { estoque: 1 }));
+tentar("finalizar pedido do cliente 2", () => finalizarPedido(2));
+console.log("Estoque do monitor (deve continuar 8):", buscarProdutoPorId(3)?.estoque);
+console.log("Pedidos registrados (deve ser 1):", consultarPedidos().length);
+
+console.log("--- Sucesso depois de repor o estoque ---");
+tentar("repor estoque do teclado para 15", () => atualizarProduto(1, { estoque: 15 }));
+tentar("finalizar pedido do cliente 2", () => finalizarPedido(2));
+console.log("Estoque monitor:", buscarProdutoPorId(3)?.estoque, "| teclado:", buscarProdutoPorId(1)?.estoque);
+
+console.log("--- Consultas ---");
+console.log("Todos os pedidos:", consultarPedidos().length);
+console.log("Pedidos do cliente 1:", consultarPedidosPorCliente(1));
+console.log("Pedidos do cliente 2:", consultarPedidosPorCliente(2).map((p) => `#${p.id} total ${p.total}`));
+tentar("pedidos de cliente inexistente", () => consultarPedidosPorCliente(99));
