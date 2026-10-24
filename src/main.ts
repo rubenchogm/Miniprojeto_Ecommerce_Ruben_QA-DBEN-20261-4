@@ -1,3 +1,4 @@
+import { exibirRelatorios } from "./relatorios";
 import {
   listarProdutos,
   buscarProdutoPorId,
@@ -124,3 +125,5 @@ console.log("Todos os pedidos:", consultarPedidos().length);
 console.log("Pedidos do cliente 1:", consultarPedidosPorCliente(1));
 console.log("Pedidos do cliente 2:", consultarPedidosPorCliente(2).map((p) => `#${p.id} total ${p.total}`));
 tentar("pedidos de cliente inexistente", () => consultarPedidosPorCliente(99));
+// ==================== RELATORIOS ====================
+exibirRelatorios();
