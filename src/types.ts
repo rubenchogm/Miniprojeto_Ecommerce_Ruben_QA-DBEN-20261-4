@@ -36,3 +36,9 @@ export type Pedido = {
   total: number;
   data: Date;
 };
+
+   // El carrito de un cliente: quién es y qué productos lleva
+   export type Carrinho = {
+     clienteId: number;
+     itens: ItemCarrinho[];
+   };
