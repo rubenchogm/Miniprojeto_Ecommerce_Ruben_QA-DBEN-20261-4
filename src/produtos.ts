@@ -1,10 +1,9 @@
-
 import { Produto, Categoria } from "./types";
 
-// Datos iniciales: el "catálogo" vive en este array, en memoria.
-// "export" permite que otros archivos (como main.ts) lo usen.
+// Dados iniciais: o catálogo vive neste array, em memória.
+// "export" permite que outros arquivos (como o main.ts) usem este array.
 export const produtos: Produto[] = [
-  { id: 1, nome: "Teclado Mecanico", categoria: "perifericos", preco: 250, estoque: 15 },
+  { id: 1, nome: "Teclado Mecânico", categoria: "perifericos", preco: 250, estoque: 15 },
   { id: 2, nome: "Mouse Gamer", categoria: "perifericos", preco: 120, estoque: 30 },
   { id: 3, nome: "Monitor 24 polegadas", categoria: "eletronicos", preco: 900, estoque: 8 },
   { id: 4, nome: "Mochila para Notebook", categoria: "acessorios", preco: 150, estoque: 20 },
@@ -12,28 +11,28 @@ export const produtos: Produto[] = [
   { id: 6, nome: "Clean Code", categoria: "livros", preco: 99.9, estoque: 5 },
 ];
 
-// Devuelve todos los productos.
+// Retorna todos os produtos.
 export function listarProdutos(): Produto[] {
   return produtos;
 }
 
-// Busca UN producto por su id. Si no existe, devuelve undefined.
+// Busca UM produto pelo identificador. Se não existir, retorna undefined.
 export function buscarProdutoPorId(id: number): Produto | undefined {
   return produtos.find((produto) => produto.id === id);
 }
 
-// Busca productos cuyo nombre CONTENGA el texto (sin importar mayúsculas).
+// Busca produtos cujo nome CONTENHA o texto informado (sem diferenciar maiúsculas de minúsculas).
 export function buscarProdutosPorNome(nome: string): Produto[] {
   const termo = nome.toLowerCase();
   return produtos.filter((produto) => produto.nome.toLowerCase().includes(termo));
 }
 
-// Devuelve solo los productos de una categoría.
+// Retorna apenas os produtos de uma categoria.
 export function filtrarProdutosPorCategoria(categoria: Categoria): Produto[] {
   return produtos.filter((produto) => produto.categoria === categoria);
 }
 
-// Datos que se pueden cambiar al actualizar (todos opcionales; el id NO se cambia).
+// Dados que podem ser alterados na atualização (todos opcionais; o id NÃO muda).
 export type DadosAtualizacao = {
   nome?: string;
   categoria?: Categoria;
@@ -41,39 +40,39 @@ export type DadosAtualizacao = {
   estoque?: number;
 };
 
-// Valida las reglas de negocio de un producto y lanza un error si alguna falla.
+// Valida as regras de negócio de um produto e lança um erro se alguma falhar.
 function validarDadosProduto(nome: string, preco: number, estoque: number): void {
   if (nome.trim() === "") {
-    throw new Error("O nome do produto nao pode estar vazio.");
+    throw new Error("O nome do produto não pode estar vazio.");
   }
   if (preco <= 0) {
-    throw new Error("O preco deve ser maior que zero.");
+    throw new Error("O preço deve ser maior que zero.");
   }
   if (estoque < 0) {
-    throw new Error("O estoque nao pode ser negativo.");
+    throw new Error("O estoque não pode ser negativo.");
   }
 }
 
-// Agrega un producto nuevo al catálogo, si cumple todas las reglas.
+// Adiciona um novo produto ao catálogo, se ele cumprir todas as regras.
 export function cadastrarProduto(novoProduto: Produto): Produto {
   validarDadosProduto(novoProduto.nome, novoProduto.preco, novoProduto.estoque);
 
   if (buscarProdutoPorId(novoProduto.id) !== undefined) {
-    throw new Error(`Ja existe um produto com o id ${novoProduto.id}.`);
+    throw new Error(`Já existe um produto com o id ${novoProduto.id}.`);
   }
 
   produtos.push(novoProduto);
   return novoProduto;
 }
 
-// Cambia los datos de un producto existente. Solo toca lo que se envía.
+// Altera os dados de um produto existente. Só mexe no que for enviado.
 export function atualizarProduto(id: number, dados: DadosAtualizacao): Produto {
   const produto = buscarProdutoPorId(id);
   if (produto === undefined) {
-    throw new Error(`Produto com id ${id} nao encontrado.`);
+    throw new Error(`Produto com id ${id} não encontrado.`);
   }
 
-  // Primero validamos con los valores finales; si algo falla, no se cambia nada.
+  // Primeiro validamos com os valores finais; se algo falhar, nada é alterado.
   validarDadosProduto(
     dados.nome ?? produto.nome,
     dados.preco ?? produto.preco,
@@ -88,11 +87,11 @@ export function atualizarProduto(id: number, dados: DadosAtualizacao): Produto {
   return produto;
 }
 
-// Elimina un producto del catálogo por su id.
+// Remove um produto do catálogo pelo id.
 export function removerProduto(id: number): Produto {
   const indice = produtos.findIndex((produto) => produto.id === id);
   if (indice === -1) {
-    throw new Error(`Produto com id ${id} nao encontrado.`);
+    throw new Error(`Produto com id ${id} não encontrado.`);
   }
 
   const [removido] = produtos.splice(indice, 1);

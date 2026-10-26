@@ -2,10 +2,10 @@ import { Carrinho, ItemCarrinho } from "./types";
 import { buscarProdutoPorId } from "./produtos";
 import { buscarClientePorId } from "./clientes";
 
-// Un carrito por cliente, guardados en memoria.
+// Um carrinho por cliente, guardados em memória.
 const carrinhos: Carrinho[] = [];
 
-// Línea del carrito con los datos del producto ya combinados (para mostrar).
+// Linha do carrinho com os dados do produto já combinados (para exibição).
 export type ItemCarrinhoDetalhado = {
   produtoId: number;
   nome: string;
@@ -14,10 +14,10 @@ export type ItemCarrinhoDetalhado = {
   subtotal: number;
 };
 
-// Devuelve el carrito del cliente; si todavía no tiene, lo crea vacío.
+// Retorna o carrinho do cliente; se ele ainda não tiver um, cria um vazio.
 export function obterCarrinho(clienteId: number): Carrinho {
   if (buscarClientePorId(clienteId) === undefined) {
-    throw new Error(`Cliente com id ${clienteId} nao encontrado.`);
+    throw new Error(`Cliente com id ${clienteId} não encontrado.`);
   }
 
   let carrinho = carrinhos.find((c) => c.clienteId === clienteId);
@@ -28,19 +28,19 @@ export function obterCarrinho(clienteId: number): Carrinho {
   return carrinho;
 }
 
-// Reglas comunes: cantidad válida y producto existente. Devuelve el producto.
+// Regras comuns: quantidade válida e produto existente. Retorna o produto.
 function validarQuantidadeEProduto(produtoId: number, quantidade: number) {
   if (!Number.isInteger(quantidade) || quantidade <= 0) {
-    throw new Error("A quantidade deve ser um numero inteiro maior que zero.");
+    throw new Error("A quantidade deve ser um número inteiro maior que zero.");
   }
   const produto = buscarProdutoPorId(produtoId);
   if (produto === undefined) {
-    throw new Error(`Produto com id ${produtoId} nao encontrado.`);
+    throw new Error(`Produto com id ${produtoId} não encontrado.`);
   }
   return produto;
 }
 
-// Agrega un producto. Si ya estaba, suma la cantidad en la misma línea.
+// Adiciona um produto. Se ele já estiver no carrinho, soma a quantidade na mesma linha.
 export function adicionarAoCarrinho(
   clienteId: number,
   produtoId: number,
@@ -54,7 +54,7 @@ export function adicionarAoCarrinho(
 
   if (quantidadeFinal > produto.estoque) {
     throw new Error(
-      `Estoque insuficiente para "${produto.nome}": disponivel ${produto.estoque}, solicitado ${quantidadeFinal}.`
+      `Estoque insuficiente para "${produto.nome}": disponível ${produto.estoque}, solicitado ${quantidadeFinal}.`
     );
   }
 
@@ -68,17 +68,17 @@ export function adicionarAoCarrinho(
   return novoItem;
 }
 
-// Quita un producto del carrito.
+// Remove um produto do carrinho.
 export function removerDoCarrinho(clienteId: number, produtoId: number): void {
   const carrinho = obterCarrinho(clienteId);
   const indice = carrinho.itens.findIndex((item) => item.produtoId === produtoId);
   if (indice === -1) {
-    throw new Error(`O produto ${produtoId} nao esta no carrinho.`);
+    throw new Error(`O produto ${produtoId} não está no carrinho.`);
   }
   carrinho.itens.splice(indice, 1);
 }
 
-// Cambia la cantidad de un producto que ya está en el carrito.
+// Altera a quantidade de um produto que já está no carrinho.
 export function alterarQuantidade(
   clienteId: number,
   produtoId: number,
@@ -89,11 +89,11 @@ export function alterarQuantidade(
 
   const item = carrinho.itens.find((i) => i.produtoId === produtoId);
   if (item === undefined) {
-    throw new Error(`O produto ${produtoId} nao esta no carrinho.`);
+    throw new Error(`O produto ${produtoId} não está no carrinho.`);
   }
   if (novaQuantidade > produto.estoque) {
     throw new Error(
-      `Estoque insuficiente para "${produto.nome}": disponivel ${produto.estoque}, solicitado ${novaQuantidade}.`
+      `Estoque insuficiente para "${produto.nome}": disponível ${produto.estoque}, solicitado ${novaQuantidade}.`
     );
   }
 
@@ -101,22 +101,22 @@ export function alterarQuantidade(
   return item;
 }
 
-// Subtotal de una línea = precio unitario x cantidad.
+// Subtotal de uma linha = preço unitário x quantidade.
 export function calcularSubtotal(item: ItemCarrinho): number {
   const produto = buscarProdutoPorId(item.produtoId);
   if (produto === undefined) {
-    throw new Error(`Produto com id ${item.produtoId} nao encontrado.`);
+    throw new Error(`Produto com id ${item.produtoId} não encontrado.`);
   }
   return produto.preco * item.quantidade;
 }
 
-// Lista las líneas del carrito con nombre, precio y subtotal.
+// Lista as linhas do carrinho com nome, preço e subtotal.
 export function listarItensCarrinho(clienteId: number): ItemCarrinhoDetalhado[] {
   const carrinho = obterCarrinho(clienteId);
   return carrinho.itens.map((item) => {
     const produto = buscarProdutoPorId(item.produtoId);
     if (produto === undefined) {
-      throw new Error(`Produto com id ${item.produtoId} nao encontrado.`);
+      throw new Error(`Produto com id ${item.produtoId} não encontrado.`);
     }
     return {
       produtoId: item.produtoId,
@@ -128,13 +128,13 @@ export function listarItensCarrinho(clienteId: number): ItemCarrinhoDetalhado[] 
   });
 }
 
-// Total del carrito = suma de todos los subtotales.
+// Total do carrinho = soma de todos os subtotais.
 export function calcularTotalCarrinho(clienteId: number): number {
   const carrinho = obterCarrinho(clienteId);
   return carrinho.itens.reduce((total, item) => total + calcularSubtotal(item), 0);
 }
 
-// Vacía el carrito (se usará al finalizar un pedido).
+// Esvazia o carrinho (usado ao finalizar um pedido).
 export function limparCarrinho(clienteId: number): void {
   const carrinho = obterCarrinho(clienteId);
   carrinho.itens = [];

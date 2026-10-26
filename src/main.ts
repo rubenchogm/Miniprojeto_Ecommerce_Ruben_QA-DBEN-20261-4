@@ -1,4 +1,3 @@
-import { exibirRelatorios } from "./relatorios";
 import {
   listarProdutos,
   buscarProdutoPorId,
@@ -15,8 +14,9 @@ import {
   calcularTotalCarrinho,
 } from "./carrinho";
 import { finalizarPedido, consultarPedidos, consultarPedidosPorCliente } from "./pedidos";
+import { exibirRelatorios } from "./relatorios";
 
-// Ejecuta una acción; si lanza un error, lo muestra en lugar de detener el programa.
+// Executa uma ação; se ela lançar um erro, mostra a mensagem em vez de interromper o programa.
 function tentar(descricao: string, acao: () => unknown): void {
   try {
     const resultado = acao();
@@ -28,13 +28,13 @@ function tentar(descricao: string, acao: () => unknown): void {
 }
 
 // ==================== PRODUTOS ====================
-console.log("=== Cadastro valido ===");
+console.log("=== Cadastro válido ===");
 tentar("cadastrar Webcam", () =>
   cadastrarProduto({ id: 7, nome: "Webcam HD", categoria: "perifericos", preco: 180, estoque: 12 })
 );
 
-console.log("=== Cadastros invalidos ===");
-tentar("preco negativo", () =>
+console.log("=== Cadastros inválidos ===");
+tentar("preço negativo", () =>
   cadastrarProduto({ id: 8, nome: "Produto X", categoria: "livros", preco: -10, estoque: 5 })
 );
 tentar("nome vazio", () =>
@@ -48,8 +48,8 @@ tentar("id repetido", () =>
 );
 
 console.log("=== Atualizar ===");
-tentar("atualizar preco do produto 2", () => atualizarProduto(2, { preco: 110 }));
-tentar("atualizar com preco zero", () => atualizarProduto(2, { preco: 0 }));
+tentar("atualizar preço do produto 2", () => atualizarProduto(2, { preco: 110 }));
+tentar("atualizar com preço zero", () => atualizarProduto(2, { preco: 0 }));
 tentar("atualizar produto inexistente", () => atualizarProduto(99, { preco: 10 }));
 
 console.log("=== Remover ===");
@@ -57,19 +57,19 @@ tentar("remover produto 7", () => removerProduto(7));
 tentar("remover produto inexistente", () => removerProduto(99));
 
 console.log("=== Estado final dos produtos ===");
-console.log(listarProdutos().length, "produtos no catalogo");
+console.log(listarProdutos().length, "produtos no catálogo");
 console.log(buscarProdutoPorId(2));
 
 // ==================== CLIENTES ====================
 console.log("=== Clientes ===");
 console.log(listarClientes());
 console.log(buscarClientePorId(2));
-tentar("cadastrar cliente valido", () =>
+tentar("cadastrar cliente válido", () =>
   cadastrarCliente({ id: 4, nome: "Pedro Alves", email: "pedro.alves@email.com" })
 );
 tentar("cliente sem nome", () => cadastrarCliente({ id: 5, nome: "", email: "x@email.com" }));
-tentar("cliente sem e-mail", () => cadastrarCliente({ id: 6, nome: "Joao", email: "" }));
-tentar("cliente com e-mail invalido", () => cadastrarCliente({ id: 7, nome: "Joao", email: "joao-email" }));
+tentar("cliente sem e-mail", () => cadastrarCliente({ id: 6, nome: "João", email: "" }));
+tentar("cliente com e-mail inválido", () => cadastrarCliente({ id: 7, nome: "João", email: "joao-email" }));
 tentar("cliente com id repetido", () => cadastrarCliente({ id: 1, nome: "Outro", email: "outro@email.com" }));
 tentar("cliente com e-mail repetido", () => cadastrarCliente({ id: 8, nome: "Outra Ana", email: "ANA.SOUZA@email.com" }));
 console.log(listarClientes().length, "clientes cadastrados");
@@ -89,7 +89,7 @@ tentar("produto inexistente", () => adicionarAoCarrinho(1, 99, 1));
 tentar("acima do estoque", () => adicionarAoCarrinho(1, 3, 50));
 tentar("cliente inexistente", () => adicionarAoCarrinho(99, 1, 1));
 tentar("remover o teclado", () => removerDoCarrinho(1, 1));
-tentar("remover item que nao esta", () => removerDoCarrinho(1, 6));
+tentar("remover item que não está no carrinho", () => removerDoCarrinho(1, 6));
 console.log(listarItensCarrinho(1));
 console.log("Total final:", calcularTotalCarrinho(1));
 
@@ -103,9 +103,9 @@ tentar("finalizar pedido do cliente 1", () => finalizarPedido(1));
 console.log("Estoque do mouse DEPOIS:", buscarProdutoPorId(2)?.estoque);
 console.log("Carrinho do cliente 1 depois da compra:", listarItensCarrinho(1));
 
-console.log("--- Preco historico ---");
-tentar("mudar preco do mouse para 150", () => atualizarProduto(2, { preco: 150 }));
-console.log("Preco unitario guardado no pedido 1:", consultarPedidos()[0]?.itens[0]?.precoUnitario);
+console.log("--- Preço histórico ---");
+tentar("mudar preço do mouse para 150", () => atualizarProduto(2, { preco: 150 }));
+console.log("Preço unitário guardado no pedido 1:", consultarPedidos()[0]?.itens[0]?.precoUnitario);
 
 console.log("--- Falha por estoque (nada deve ser descontado) ---");
 tentar("cliente 2 adiciona 3 monitores", () => adicionarAoCarrinho(2, 3, 3));
@@ -125,5 +125,6 @@ console.log("Todos os pedidos:", consultarPedidos().length);
 console.log("Pedidos do cliente 1:", consultarPedidosPorCliente(1));
 console.log("Pedidos do cliente 2:", consultarPedidosPorCliente(2).map((p) => `#${p.id} total ${p.total}`));
 tentar("pedidos de cliente inexistente", () => consultarPedidosPorCliente(99));
-// ==================== RELATORIOS ====================
+
+// ==================== RELATÓRIOS ====================
 exibirRelatorios();
